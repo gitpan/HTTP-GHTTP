@@ -1,4 +1,4 @@
-/* $Id: GHTTP.xs,v 1.4 2000/11/22 19:47:19 matt Exp $ */
+/* $Id: GHTTP.xs,v 1.5 2000/11/24 15:16:11 matt Exp $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,7 +80,7 @@ int
 process(self)
         ghttp_request *self
     PREINIT:
-        int process_status;
+        ghttp_status process_status;
     CODE:
         process_status = ghttp_process(self);
         if (process_status == ghttp_error) {

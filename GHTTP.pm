@@ -1,4 +1,4 @@
-# $Id: GHTTP.pm,v 1.6 2000/11/22 19:48:18 matt Exp $
+# $Id: GHTTP.pm,v 1.7 2000/11/30 10:47:49 matt Exp $
 
 package HTTP::GHTTP;
 
@@ -49,7 +49,7 @@ require DynaLoader;
                 )],
     );
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 
 bootstrap HTTP::GHTTP $VERSION;
 
@@ -59,6 +59,7 @@ sub new {
     bless $r, $class;
     if (@_) {
         my $uri = shift;
+        die "Blank uri not supported" unless length($uri);
         $r->set_uri($uri);
         while(@_) {
             my ($header, $value) = splice(@_, 0, 2);
@@ -216,7 +217,8 @@ process returns undef for error, 1 for "in progress", and zero for
 =head2 $r->get_socket()
 
 Returns an IO::Handle object that is the currently in progress socket.
-Useful only when doing async downloads. See L<ASYNC OPERATION>.
+Useful only when doing async downloads. There appears to be some corruption
+when using the socket to retrieve file contents on more recent libghttp's.
 
 =head2 $r->current_status()
 
@@ -242,22 +244,23 @@ the remote URI. Optionally pass in headers.
 =head1 ASYNC OPERATION
 
 Its possible to use an asynchronous mode of operation with ghttp. Here's
-a brief example of how (this also shows you how to get a filehandle/socket
-out of ghttp):
+a brief example of how:
 
-    my $r = HTTP::GHTTP->new("http://axkit.org");
+    my $r = HTTP::GHTTP->new("http://axkit.org/");
     $r->set_async; 
-    $r->set_chunksize(40);
+    $r->set_chunksize(1);
     $r->prepare;
 
-    $r->process;
-    
-    # get the socket connection itself
-    my $sock = $r->get_socket;
-    
-    while(<$sock>) {
-        print;
+    my $status;
+    while ($status = $r->process) {
+        # do something
+        # you can do $r->get_body in here if you want to
+        # but it always returns the entire body.
     }
+    
+    die "An error occured" unless defined $status;
+    
+    print $r->get_body;
 
 Doing timeouts is an exercise for the reader (hint: lookup select() in
 perlfunc).
