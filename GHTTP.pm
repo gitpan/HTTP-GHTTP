@@ -1,4 +1,4 @@
-# $Id: GHTTP.pm,v 1.4 2000/11/22 14:39:22 matt Exp $
+# $Id: GHTTP.pm,v 1.6 2000/11/22 19:48:18 matt Exp $
 
 package HTTP::GHTTP;
 
@@ -49,7 +49,7 @@ require DynaLoader;
                 )],
     );
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 
 bootstrap HTTP::GHTTP $VERSION;
 
@@ -73,6 +73,15 @@ sub get {
     my $r = __PACKAGE__->new(@_);
     $r->process_request;
     return $r->get_body();
+}
+
+sub get_socket {
+    my $self = shift;
+    require IO::Handle;
+    my $sockno = $self->_get_socket();
+    my $sock = IO::Handle->new_from_fd($sockno, "r") 
+            || die "Cannot open socket: $!";
+    return $sock;
 }
 
 1;
@@ -191,10 +200,73 @@ This sets your proxy server, use the form "http://proxy:port"
 If you have set a proxy and your proxy requires a username and password
 you can set it with this.
 
+=head2 $r->prepare()
+
+This is a low level interface useful only when doing async downloads.
+See L<ASYNC OPERATION>.
+
+=head2 $r->process()
+
+This is a low level interface useful only when doing async downloads.
+See L<ASYNC OPERATION>.
+
+process returns undef for error, 1 for "in progress", and zero for
+"complete".
+
+=head2 $r->get_socket()
+
+Returns an IO::Handle object that is the currently in progress socket.
+Useful only when doing async downloads. See L<ASYNC OPERATION>.
+
+=head2 $r->current_status()
+
+This is only useful in async mode. It returns 3 values: The current
+processing stage (0 = none, 1 = request, 2 = response headers,
+3 = response), the number of bytes read, and the number of bytes total.
+
+=head2 $r->set_async()
+
+This turns async mode on. There is no corresponding unset function.
+
+=head2 $r->set_chunksize($bytes)
+
+Sets the download (and upload) chunk size in bytes for use in async
+mode. This may be a useful value to set for slow modems, or perhaps
+for a download progress bar, or just to allow periodic writes.
+
 =head2 get($uri, [%headers])
 
 This does everything automatically for you, retrieving the body at
 the remote URI. Optionally pass in headers.
+
+=head1 ASYNC OPERATION
+
+Its possible to use an asynchronous mode of operation with ghttp. Here's
+a brief example of how (this also shows you how to get a filehandle/socket
+out of ghttp):
+
+    my $r = HTTP::GHTTP->new("http://axkit.org");
+    $r->set_async; 
+    $r->set_chunksize(40);
+    $r->prepare;
+
+    $r->process;
+    
+    # get the socket connection itself
+    my $sock = $r->get_socket;
+    
+    while(<$sock>) {
+        print;
+    }
+
+Doing timeouts is an exercise for the reader (hint: lookup select() in
+perlfunc).
+
+Note also that $sock above is an IO::Handle, not an IO::Socket, although
+you can probably get away with re-blessing it. Also note that by calling
+$r->get_socket() you load IO::Handle, which probably brings a lot of
+code with it, thereby obliterating a lot of the use for libghttp. So
+use at your own risk :-)
 
 =head1 AUTHOR
 
@@ -212,12 +284,8 @@ in the libghttp distribution.
 Probably many - this is my first adventure into XS.
 
 libghttp doesn't support SSL. When libghttp does support SSL, so will
-HTTP::GHTTP.
-
-There is a synchronous mode to libghttp (ghttp_set_sync(request, 1))
-but there is absolutely no documentation anywhere on the 'net for it.
-If someone knows how to use this I might be able to provide the sort
-of thing LWP-NG provides.
+HTTP::GHTTP. The author of libghttp, Chris Blizzard <blizzard@redhat.com>
+is looking for patches to support SSL, so get coding!
 
 =head1 BENCHMARKS
 

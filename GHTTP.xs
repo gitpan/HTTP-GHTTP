@@ -1,4 +1,4 @@
-/* $Id: GHTTP.xs,v 1.3 2000/11/22 11:59:19 matt Exp $ */
+/* $Id: GHTTP.xs,v 1.4 2000/11/22 19:47:19 matt Exp $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,7 +37,7 @@ set_uri(self, uri)
         ghttp_request *self
         char *uri
     CODE:
-        if(ghttp_set_uri(self, uri) == -1) {
+        if(ghttp_set_uri(self, uri) == ghttp_error) {
             XSRETURN_UNDEF;
         }
         RETVAL = 1;
@@ -67,6 +67,28 @@ process_request(self)
     CODE:
         ghttp_prepare(self);
         ghttp_process(self);
+
+int
+prepare(self)
+        ghttp_request *self
+    CODE:
+        RETVAL = ghttp_prepare(self);
+    OUTPUT:
+        RETVAL
+
+int
+process(self)
+        ghttp_request *self
+    PREINIT:
+        int process_status;
+    CODE:
+        process_status = ghttp_process(self);
+        if (process_status == ghttp_error) {
+            XSRETURN_UNDEF;
+        }
+        RETVAL = !process_status;
+    OUTPUT:
+        RETVAL
 
 const char*
 get_header(self, hdr)
@@ -168,6 +190,32 @@ get_status(self)
         PUSHs(sv_2mortal(newSViv(code)));
         PUSHs(sv_2mortal(newSVpv((char*)reason, 0)));
 
+void
+current_status(self)
+        ghttp_request *self
+    PREINIT:
+        ghttp_current_status status;
+    PPCODE:
+        status = ghttp_get_status(self);
+        EXTEND(SP, 3);
+        PUSHs(sv_2mortal(newSViv(status.proc)));
+        PUSHs(sv_2mortal(newSViv(status.bytes_read)));
+        PUSHs(sv_2mortal(newSViv(status.bytes_total)));
+
+int
+set_async(self)
+        ghttp_request *self
+    CODE:
+        RETVAL = ghttp_set_sync(self, ghttp_async);
+    OUTPUT:
+        RETVAL
+
+void
+set_chunksize(self, size)
+        ghttp_request *self
+        int size
+    CODE:
+        ghttp_set_chunksize(self, size);
 
  #
  # CONSTANTS
