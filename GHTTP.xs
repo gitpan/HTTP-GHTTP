@@ -1,4 +1,4 @@
-/* $Id: GHTTP.xs,v 1.5 2000/11/24 15:16:11 matt Exp $ */
+/* $Id: GHTTP.xs,v 1.7 2001/01/18 17:42:58 matt Exp $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -136,7 +136,7 @@ get_body(self)
     PREINIT:
         SV* buffer;
     CODE:
-        buffer = NEWSV(0, 0);
+        buffer = newSVpvn("",0);
         sv_catpvn(buffer, ghttp_get_body(self), ghttp_get_body_len(self));
         RETVAL = buffer;
     OUTPUT:

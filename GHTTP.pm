@@ -1,16 +1,18 @@
-# $Id: GHTTP.pm,v 1.8 2001/01/13 20:08:38 matt Exp $
+# $Id: GHTTP.pm,v 1.10 2001/01/18 17:42:58 matt Exp $
 
 package HTTP::GHTTP;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT_OK %EXPORT_TAGS);
 
+$VERSION = '1.06';
+
 require Exporter;
 require DynaLoader;
 
 @ISA = qw(Exporter DynaLoader);
 
-$VERSION = '1.05';
+bootstrap HTTP::GHTTP $VERSION;
 
 @EXPORT_OK = qw( 
     get
@@ -50,8 +52,6 @@ $VERSION = '1.05';
                     METHOD_UNLOCK
                 )],
     );
-
-bootstrap HTTP::GHTTP $VERSION;
 
 sub new {
     my $class = shift;

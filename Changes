@@ -1,5 +1,9 @@
 Revision history for HTTP::GHTTP.
 
+1.06 Thu Jan 18 2000
+    - Fixed "use of uninitialized value" messages
+    - Minor tweaks
+
 1.05 Wed Jan 17 2000
     - Added *much* better LIBS/INC code
     - Added get_headers() (works with libghttp 1.08 and higher)

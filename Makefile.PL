@@ -1,4 +1,4 @@
-# $Id: Makefile.PL,v 1.7 2001/01/15 14:39:39 matt Exp $
+# $Id: Makefile.PL,v 1.8 2001/01/17 15:39:41 matt Exp $
 
 use ExtUtils::MakeMaker;
 use Config;
@@ -48,7 +48,12 @@ if ($config{LIBS} !~ /\-lghttp/) {
 }
 
 if (!have_library("ghttp")) {
-    die "ghttp not found\nTry setting LIBS and INC values on the command line\n";
+    die <<DEATH;
+libghttp not found
+Try setting LIBS and INC values on the command line
+Or get libghttp from 
+  ftp://ftp.gnome.org/pub/GNOME/stable/sources/libghttp/
+DEATH
 }
 
 have_library("ghttp", "ghttp_get_header_names");

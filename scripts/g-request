@@ -65,8 +65,8 @@ if ($options{e}) {
     }
 }
 
-if (!$options{d}) { 
-    print $r->get_body; 
+unless ($options{d}) {
+    print $r->get_body();
 }
 
 sub usage {

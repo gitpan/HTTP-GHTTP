@@ -1,7 +1,8 @@
-# $Id: simple.t,v 1.3 2000/11/22 11:59:46 matt Exp $
+# $Id: simple.t,v 1.4 2001/01/18 17:43:10 matt Exp $
 
 use Test;
 use HTTP::GHTTP;
+use strict;
 BEGIN { plan tests => 3 }
 ok(1);
 
