@@ -10,7 +10,7 @@ require DynaLoader;
 
 @ISA = qw(Exporter DynaLoader);
 
-$VERSION = '1.04';
+$VERSION = '1.05';
 
 @EXPORT_OK = qw( 
     get
@@ -178,6 +178,16 @@ phrase. A simple example of the return values would be (200, "OK").
 =head2 $r->get_header($header)
 
 This gets the value of an incoming HTTP response header
+
+=head2 $r->get_headers()
+
+Returns a list of all the response header names in the order they 
+came back. This method is only available in libghttp 1.08 and later -
+perl Makefile.PL should have reported whether it found it or not.
+
+  my @headers = $r->get_headers;
+  print join("\n", 
+        map { "$_: " . $r->get_header($_) } @headers), "\n\n";
 
 =head2 $r->get_body()
 

@@ -99,6 +99,29 @@ get_header(self, hdr)
     OUTPUT:
         RETVAL
 
+#ifdef HAVE_GHTTP_GET_HEADER_NAMES
+
+void
+get_headers(self)
+        ghttp_request *self
+    PREINIT:
+        char **hdrs;
+        int num_hdrs;
+        int i;
+    PPCODE:
+        if (ghttp_get_header_names(self, &hdrs, &num_hdrs) == -1) {
+            XSRETURN_UNDEF;
+        }
+        
+        EXTEND(SP, num_hdrs);
+        
+        for (i = 0; i < num_hdrs; i++) {
+            PUSHs(sv_2mortal(newSVpv(hdrs[i], 0)));
+            free(hdrs[i]);
+        }
+
+#endif
+
 int
 close(self)
         ghttp_request *self

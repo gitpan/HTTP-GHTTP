@@ -1,5 +1,9 @@
 Revision history for HTTP::GHTTP.
 
+1.05 Wed Jan 17 2000
+    - Added *much* better LIBS/INC code
+    - Added get_headers() (works with libghttp 1.08 and higher)
+
 1.04 Sat Jan 13 2000
     - Better INC and LIBS control.
     - Added g-request to MANIFEST

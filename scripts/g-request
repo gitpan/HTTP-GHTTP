@@ -46,7 +46,8 @@ for my $extra_header (@{ $options{H} || [] }) {
     $r->set_header($name, $value);
 }
 
-$r->set_proxy($options{p});
+$r->set_proxy($ENV{http_proxy}) if $ENV{http_proxy} && !$options{P};
+$r->set_proxy($options{p}) if $options{p};
 
 my $URI = shift @ARGV;
 
@@ -54,7 +55,19 @@ $r->set_uri($URI);
 
 $r->process_request();
 
-if (!$options{d}) { print $r->get_body; }
+if ($options{e}) {
+    eval {
+        my @headers = $r->get_headers;
+        print join("\n", map { "$_: " . $r->get_header($_) } @headers), "\n\n";
+    };
+    if ($@) {
+        warn $@, "\n", "get_headers (and thus -e) only available in libghttp 1.08 and higher";
+    }
+}
+
+if (!$options{d}) { 
+    print $r->get_body; 
+}
 
 sub usage {
     print <<EOT;
@@ -74,3 +87,4 @@ EOT
     exit; #'
 }
 
+exit(0);
