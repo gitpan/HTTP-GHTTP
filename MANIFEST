@@ -1,0 +1,8 @@
+Changes
+README
+GHTTP.pm
+GHTTP.xs
+Makefile.PL
+MANIFEST
+typemap
+t/simple.t
