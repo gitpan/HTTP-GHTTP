@@ -1,4 +1,4 @@
-# $Id: GHTTP.pm,v 1.7 2000/11/30 10:47:49 matt Exp $
+# $Id: GHTTP.pm,v 1.8 2001/01/13 20:08:38 matt Exp $
 
 package HTTP::GHTTP;
 
@@ -9,6 +9,8 @@ require Exporter;
 require DynaLoader;
 
 @ISA = qw(Exporter DynaLoader);
+
+$VERSION = '1.04';
 
 @EXPORT_OK = qw( 
     get
@@ -48,8 +50,6 @@ require DynaLoader;
                     METHOD_UNLOCK
                 )],
     );
-
-$VERSION = '1.03';
 
 bootstrap HTTP::GHTTP $VERSION;
 

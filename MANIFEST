@@ -6,3 +6,4 @@ Makefile.PL
 MANIFEST
 typemap
 t/simple.t
+scripts/g-request

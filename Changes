@@ -1,5 +1,9 @@
 Revision history for HTTP::GHTTP.
 
+1.04 Sat Jan 13 2000
+    - Better INC and LIBS control.
+    - Added g-request to MANIFEST
+
 1.03 Wed Jan 10 2000
     - Use gnome-config to get INC and LIB from
 
