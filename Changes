@@ -1,5 +1,10 @@
 Revision history for HTTP::GHTTP.
 
+1.01 Wed Nov 22 2000
+    - Bug fix in returned body string (could become corrupted with >1 request)
+    - Added lots more ghttp methods (allows you to POST now and much more)
+    - Documentation updates
+
 1.0  Tue Nov 21 2000
     - original version
 

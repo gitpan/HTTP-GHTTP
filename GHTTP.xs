@@ -1,4 +1,4 @@
-/* $Id: GHTTP.xs,v 1.2 2000/11/21 19:59:27 matt Exp $ */
+/* $Id: GHTTP.xs,v 1.3 2000/11/22 11:59:19 matt Exp $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -92,7 +92,7 @@ get_body(self)
         SV* buffer;
     CODE:
         buffer = NEWSV(0, 0);
-        sv_catpvf(buffer, "%s", ghttp_get_body(self));
+        sv_catpvn(buffer, ghttp_get_body(self), ghttp_get_body_len(self));
         RETVAL = buffer;
     OUTPUT:
         RETVAL
@@ -122,5 +122,158 @@ set_proxy_authinfo(self, user, pass)
         const char *pass
     CODE:
         RETVAL = ghttp_set_proxy_authinfo(self, user, pass);
+    OUTPUT:
+        RETVAL
+
+int
+set_type(self, type)
+        ghttp_request *self
+        int type
+    CODE:
+        RETVAL = ghttp_set_type(self, type);
+    OUTPUT:
+        RETVAL
+
+int
+set_body(self, body)
+        ghttp_request *self
+        SV *body
+    PREINIT:
+        STRLEN len;
+        char * str;
+    CODE:
+        str = SvPV(body, len);
+        RETVAL = ghttp_set_body(self, str, len);
+    OUTPUT:
+        RETVAL
+
+int
+_get_socket(self)
+        ghttp_request *self
+    CODE:
+        RETVAL = ghttp_get_socket(self);
+    OUTPUT:
+        RETVAL
+
+void
+get_status(self)
+        ghttp_request *self
+    PREINIT:
+        int code;
+        const char *reason;
+    PPCODE:
+        code = ghttp_status_code(self);
+        reason = ghttp_reason_phrase(self);
+        EXTEND(SP, 2);
+        PUSHs(sv_2mortal(newSViv(code)));
+        PUSHs(sv_2mortal(newSVpv((char*)reason, 0)));
+
+
+ #
+ # CONSTANTS
+ #
+
+int
+METHOD_GET()
+    CODE:
+        RETVAL = ghttp_type_get;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_OPTIONS()
+    CODE:
+        RETVAL = ghttp_type_options;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_HEAD()
+    CODE:
+        RETVAL = ghttp_type_head;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_POST()
+    CODE:
+        RETVAL = ghttp_type_post;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_PUT()
+    CODE:
+        RETVAL = ghttp_type_put;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_DELETE()
+    CODE:
+        RETVAL = ghttp_type_delete;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_TRACE()
+    CODE:
+        RETVAL = ghttp_type_trace;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_CONNECT()
+    CODE:
+        RETVAL = ghttp_type_connect;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_PROPFIND()
+    CODE:
+        RETVAL = ghttp_type_propfind;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_PROPPATCH()
+    CODE:
+        RETVAL = ghttp_type_proppatch;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_MKCOL()
+    CODE:
+        RETVAL = ghttp_type_mkcol;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_COPY()
+    CODE:
+        RETVAL = ghttp_type_copy;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_MOVE()
+    CODE:
+        RETVAL = ghttp_type_move;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_LOCK()
+    CODE:
+        RETVAL = ghttp_type_lock;
+    OUTPUT:
+        RETVAL
+
+int
+METHOD_UNLOCK()
+    CODE:
+        RETVAL = ghttp_type_unlock;
     OUTPUT:
         RETVAL

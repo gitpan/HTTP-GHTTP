@@ -1,18 +1,55 @@
-# $Id: GHTTP.pm,v 1.2 2000/11/21 19:59:27 matt Exp $
+# $Id: GHTTP.pm,v 1.4 2000/11/22 14:39:22 matt Exp $
 
 package HTTP::GHTTP;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT_OK);
+use vars qw($VERSION @ISA @EXPORT_OK %EXPORT_TAGS);
 
 require Exporter;
 require DynaLoader;
 
 @ISA = qw(Exporter DynaLoader);
 
-@EXPORT_OK = qw( get );
+@EXPORT_OK = qw( 
+    get
+    METHOD_GET
+    METHOD_POST
+    METHOD_OPTIONS
+    METHOD_HEAD
+    METHOD_PUT
+    METHOD_DELETE
+    METHOD_TRACE
+    METHOD_CONNECT
+    METHOD_PROPFIND
+    METHOD_PROPPATCH
+    METHOD_MKCOL
+    METHOD_COPY
+    METHOD_MOVE
+    METHOD_LOCK
+    METHOD_UNLOCK
+    );
 
-$VERSION = '1.0';
+%EXPORT_TAGS = (
+    methods => [qw(
+                    METHOD_GET
+                    METHOD_POST
+                    METHOD_OPTIONS
+                    METHOD_HEAD
+                    METHOD_PUT
+                    METHOD_DELETE
+                    METHOD_TRACE
+                    METHOD_CONNECT
+                    METHOD_PROPFIND
+                    METHOD_PROPPATCH
+                    METHOD_MKCOL
+                    METHOD_COPY
+                    METHOD_MOVE
+                    METHOD_LOCK
+                    METHOD_UNLOCK
+                )],
+    );
+
+$VERSION = '1.01';
 
 bootstrap HTTP::GHTTP $VERSION;
 
@@ -82,9 +119,51 @@ This sets the URI for the request
 
 This sets an outgoing HTTP request header
 
+=head2 $r->set_type($type)
+
+This sets the request type. The request types themselves are constants
+that are not exported by default. To export them, specify the :methods
+option in the import list:
+
+    use HTTP::GHTTP qw/:methods/;
+    my $r = HTTP::GHTTP->new();
+    $r->set_uri('http://axkit.com/');
+    $r->set_type(METHOD_HEAD);
+    ...
+
+The available methods are:
+
+    METHOD_GET
+    METHOD_POST
+    METHOD_OPTIONS
+    METHOD_HEAD
+    METHOD_PUT
+    METHOD_DELETE
+    METHOD_TRACE
+    METHOD_CONNECT
+    METHOD_PROPFIND
+    METHOD_PROPPATCH
+    METHOD_MKCOL
+    METHOD_COPY
+    METHOD_MOVE
+    METHOD_LOCK
+    METHOD_UNLOCK
+
+Some of these are for DAV.
+
+=head2 $r->set_body($body)
+
+This sets the body of a request, useful in POST and some of the DAV
+request types.
+
 =head2 $r->process_request()
 
 This sends the actual request to the server
+
+=head2 $r->get_status()
+
+This returns 2 values, a status code (numeric) and a status reason
+phrase. A simple example of the return values would be (200, "OK").
 
 =head2 $r->get_header($header)
 
@@ -130,6 +209,28 @@ in the libghttp distribution.
 
 =head1 BUGS
 
-No support for POST (yet).
+Probably many - this is my first adventure into XS.
+
+libghttp doesn't support SSL. When libghttp does support SSL, so will
+HTTP::GHTTP.
+
+There is a synchronous mode to libghttp (ghttp_set_sync(request, 1))
+but there is absolutely no documentation anywhere on the 'net for it.
+If someone knows how to use this I might be able to provide the sort
+of thing LWP-NG provides.
+
+=head1 BENCHMARKS
+
+Benchmarking this sort of thing is often difficult, and I don't want
+to offend anyone. But as well as being lightweight (HTTP::GHTTP is
+about 4 times less code than either LWP::UserAgent, or HTTP::Lite), it
+is also in my tests significantly faster. Here are my benchmark
+results requesting http://localhost/ (the Apache "Successful Install"
+page):
+
+    Benchmark: timing 1000 iterations of ghttp, lite, lwp...
+         ghttp:  8 wallclock secs ( 0.96 usr +  1.16 sys =  2.12 CPU)
+          lite: 21 wallclock secs ( 3.00 usr +  3.44 sys =  6.44 CPU)
+           lwp: 18 wallclock secs ( 9.76 usr +  1.59 sys = 11.35 CPU)
 
 =cut
