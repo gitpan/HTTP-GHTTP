@@ -1,5 +1,8 @@
 Revision history for HTTP::GHTTP.
 
+1.07
+    - Added support for clean() and NULL return values (david Ramboz)
+
 1.06 Thu Jan 18 2000
     - Fixed "use of uninitialized value" messages
     - Minor tweaks

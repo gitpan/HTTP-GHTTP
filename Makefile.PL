@@ -41,7 +41,7 @@ OPT
 
 }
 
-my $LINK = "$Config{ld} -o conftest $Config{ccflags} -I$Config{incpath} %s $Config{ldflags} conftest.c %s %s";
+my $LINK = "$Config{ld} -o conftest $Config{ccflags} -I$Config{incpath} %s $Config{ldflags} conftest.c $Config{libs} %s %s";
 
 if ($config{LIBS} !~ /\-lghttp/) {
     $config{LIBS} .= ' -lghttp';

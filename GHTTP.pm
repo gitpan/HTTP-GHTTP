@@ -1,11 +1,11 @@
-# $Id: GHTTP.pm,v 1.10 2001/01/18 17:42:58 matt Exp $
+# $Id: GHTTP.pm,v 1.11 2002/03/25 09:25:53 matt Exp $
 
 package HTTP::GHTTP;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT_OK %EXPORT_TAGS);
 
-$VERSION = '1.06';
+$VERSION = '1.07';
 
 require Exporter;
 require DynaLoader;

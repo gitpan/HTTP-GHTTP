@@ -1,4 +1,4 @@
-/* $Id: GHTTP.xs,v 1.7 2001/01/18 17:42:58 matt Exp $ */
+/* $Id: GHTTP.xs,v 1.8 2002/03/25 09:24:54 matt Exp $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,6 +67,12 @@ process_request(self)
     CODE:
         ghttp_prepare(self);
         ghttp_process(self);
+
+void
+clean(self)
+       ghttp_request *self
+    CODE:
+       ghttp_clean(self);
 
 int
 prepare(self)
@@ -211,7 +217,9 @@ get_status(self)
         reason = ghttp_reason_phrase(self);
         EXTEND(SP, 2);
         PUSHs(sv_2mortal(newSViv(code)));
-        PUSHs(sv_2mortal(newSVpv((char*)reason, 0)));
+       if (reason == NULL)
+               reason="NULL";
+               PUSHs(sv_2mortal(newSVpv((char*)reason, 0)));
 
 void
 current_status(self)
